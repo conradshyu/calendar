@@ -1,0 +1,505 @@
+// WinCalendar resources
+#include <windows.h>
+#include <commctrl.h>
+#include "resource.h"
+
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+
+IDI_APP ICON "res\\app.ico"
+
+#include "ribbon.rc"
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 1,0,0,0
+ PRODUCTVERSION 1,0,0,0
+ FILEOS VOS_NT_WINDOWS32
+ FILETYPE VFT_APP
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "FileDescription", "WinCalendar - Ribbon calendar for Windows"
+            VALUE "FileVersion", "1.0.0.0"
+            VALUE "ProductName", "WinCalendar"
+            VALUE "ProductVersion", "1.0.0.0"
+            VALUE "OriginalFilename", "WinCalendar.exe"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+IDR_ACCEL ACCELERATORS
+BEGIN
+    "N", IDM_NEWEVENT, VIRTKEY, CONTROL
+    "M", IDM_NEWMEETING, VIRTKEY, CONTROL, SHIFT
+    "K", IDM_NEWTASK, VIRTKEY, CONTROL, SHIFT
+    "F", IDM_SEARCH, VIRTKEY, CONTROL
+    "E", IDM_FOCUSSEARCH, VIRTKEY, CONTROL
+    "T", IDM_TODAY, VIRTKEY, CONTROL
+    "G", IDM_GOTO, VIRTKEY, CONTROL
+    "1", IDM_VIEWDAY, VIRTKEY, CONTROL
+    "2", IDM_VIEWWEEK, VIRTKEY, CONTROL
+    "3", IDM_VIEWMONTH, VIRTKEY, CONTROL
+    "4", IDM_VIEWYEAR, VIRTKEY, CONTROL
+    "5", IDM_VIEWAGENDA, VIRTKEY, CONTROL
+    "I", IDM_IMPORT, VIRTKEY, CONTROL
+    "O", IDM_OPEN, VIRTKEY, CONTROL
+    VK_F5, IDM_SYNC, VIRTKEY
+    VK_F1, IDM_ABOUT, VIRTKEY
+END
+
+#define PAGE_STYLE DS_SHELLFONT | DS_CONTROL | WS_CHILD | WS_CAPTION
+#define DLG_STYLE  DS_SHELLFONT | DS_MODALFRAME | WS_POPUP | WS_CAPTION | WS_SYSMENU
+
+// ===================================================================== Event dialog pages
+IDD_EV_GENERAL DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "General"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Title:", -1, 7, 9, 50, 8
+    EDITTEXT        IDC_TITLE, 60, 7, 263, 13, ES_AUTOHSCROLL
+    LTEXT           "&Location:", -1, 7, 27, 50, 8
+    EDITTEXT        IDC_LOCATION, 60, 25, 263, 13, ES_AUTOHSCROLL
+    LTEXT           "&Calendar:", -1, 7, 45, 50, 8
+    COMBOBOX        IDC_CALENDAR, 60, 43, 110, 120, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Cate&gory:", -1, 178, 45, 36, 8
+    COMBOBOX        IDC_CATEGORY, 216, 43, 107, 120, CBS_DROPDOWN | CBS_AUTOHSCROLL | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Starts:", -1, 7, 65, 50, 8
+    CONTROL         "", IDC_STARTDATE, DATETIMEPICK_CLASS, DTS_SHORTDATECENTURYFORMAT | WS_TABSTOP, 60, 63, 90, 13
+    CONTROL         "", IDC_STARTTIME, DATETIMEPICK_CLASS, DTS_TIMEFORMAT | DTS_UPDOWN | WS_TABSTOP, 154, 63, 70, 13
+    AUTOCHECKBOX    "&All-day event", IDC_ALLDAY, 236, 64, 87, 10
+    LTEXT           "&Ends:", -1, 7, 83, 50, 8
+    CONTROL         "", IDC_ENDDATE, DATETIMEPICK_CLASS, DTS_SHORTDATECENTURYFORMAT | WS_TABSTOP, 60, 81, 90, 13
+    CONTROL         "", IDC_ENDTIME, DATETIMEPICK_CLASS, DTS_TIMEFORMAT | DTS_UPDOWN | WS_TABSTOP, 154, 81, 70, 13
+    LTEXT           "", IDC_TZNOTE, 236, 80, 87, 18, SS_NOPREFIX
+    LTEXT           "Show &as:", -1, 7, 101, 50, 8
+    COMBOBOX        IDC_BUSY, 60, 99, 110, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "", IDC_SUMMARY, 178, 101, 145, 8, SS_ENDELLIPSIS | SS_NOPREFIX
+    LTEXT           "&Notes:", -1, 7, 119, 50, 8
+    EDITTEXT        IDC_DESC, 60, 117, 263, 98, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    LTEXT           "", IDC_READONLY, 7, 221, 316, 8, SS_NOPREFIX
+END
+
+IDD_EV_RECUR DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "Recurrence"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Repeat:", -1, 7, 9, 50, 8
+    COMBOBOX        IDC_FREQ, 60, 7, 100, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "E&very:", -1, 172, 9, 26, 8
+    EDITTEXT        IDC_INTERVAL, 200, 7, 32, 13, ES_NUMBER
+    CONTROL         "", IDC_INTERVAL_SPIN, UPDOWN_CLASS, UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 232, 7, 10, 13
+    LTEXT           "", IDC_UNITS, 238, 9, 80, 8, SS_NOPREFIX
+    GROUPBOX        "Weekly - repeat on", IDC_WEEKDAYS, 7, 28, 316, 44
+    AUTOCHECKBOX    "Sun", IDC_WD0, 15, 42, 40, 10
+    AUTOCHECKBOX    "Mon", IDC_WD0+1, 58, 42, 40, 10
+    AUTOCHECKBOX    "Tue", IDC_WD0+2, 101, 42, 40, 10
+    AUTOCHECKBOX    "Wed", IDC_WD0+3, 144, 42, 40, 10
+    AUTOCHECKBOX    "Thu", IDC_WD0+4, 187, 42, 40, 10
+    AUTOCHECKBOX    "Fri", IDC_WD0+5, 230, 42, 40, 10
+    AUTOCHECKBOX    "Sat", IDC_WD0+6, 273, 42, 40, 10
+    PUSHBUTTON      "Week&days", IDC_FIRSTMON, 15, 55, 50, 13
+    GROUPBOX        "Monthly / yearly pattern", -1, 7, 78, 316, 48
+    AUTORADIOBUTTON "On the same &day of the month", IDC_MONTH_DAY, 15, 92, 200, 10, WS_GROUP | WS_TABSTOP
+    AUTORADIOBUTTON "On &the", IDC_MONTH_NTH, 15, 108, 40, 10
+    COMBOBOX        IDC_NTH, 60, 106, 60, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_NTHDAY, 126, 106, 80, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "(e.g. ""every first Monday"")", -1, 212, 108, 108, 8
+    GROUPBOX        "End", -1, 7, 132, 316, 62
+    AUTORADIOBUTTON "&Never", IDC_END_NEVER, 15, 146, 80, 10, WS_GROUP | WS_TABSTOP
+    AUTORADIOBUTTON "&Until:", IDC_END_UNTIL, 15, 162, 50, 10
+    CONTROL         "", IDC_UNTILDATE, DATETIMEPICK_CLASS, DTS_SHORTDATECENTURYFORMAT | WS_TABSTOP, 70, 160, 90, 13
+    AUTORADIOBUTTON "A&fter:", IDC_END_COUNT, 15, 178, 50, 10
+    EDITTEXT        IDC_COUNT, 70, 176, 36, 13, ES_NUMBER
+    CONTROL         "", IDC_COUNT_SPIN, UPDOWN_CLASS, UDS_SETBUDDYINT | UDS_ALIGNRIGHT | UDS_AUTOBUDDY | UDS_ARROWKEYS, 106, 176, 10, 13
+    LTEXT           "occurrences", -1, 112, 178, 60, 8
+    LTEXT           "", IDC_SUMMARY, 7, 204, 316, 24, SS_NOPREFIX
+END
+
+IDD_EV_TZ DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "Time Zone"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Choose how this event behaves when you travel or change your time zone.", -1, 7, 7, 316, 16
+    AUTORADIOBUTTON "&Lock to a specific time zone (the event shifts on your calendar when you are in another zone):", IDC_TZ_PINNED, 7, 28, 316, 10, WS_GROUP | WS_TABSTOP
+    COMBOBOX        IDC_TZCOMBO, 19, 42, 304, 200, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Use &my location", IDC_TZMINE, 19, 59, 80, 14
+    AUTOCHECKBOX    "&Keep the same moment when changing zone (convert the start time)", IDC_TZCONVERT, 105, 61, 218, 10
+    AUTORADIOBUTTON "&Floating - same clock time in every time zone (e.g. ""take medicine at 8:00"")", IDC_TZ_FLOATING, 7, 82, 316, 10
+    GROUPBOX        "Preview", -1, 7, 100, 316, 100
+    LTEXT           "", IDC_TZPREVIEW, 15, 113, 300, 82, SS_NOPREFIX
+    LTEXT           "The date and time on the General tab are entered in the event's own time zone.", -1, 7, 208, 316, 16
+END
+
+IDD_EV_ATTENDEES DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "Attendees"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_ORGANIZER, 7, 7, 316, 8, SS_NOPREFIX
+    CONTROL         "", IDC_ATTLIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 19, 316, 106
+    LTEXT           "&Name:", -1, 7, 133, 30, 8
+    EDITTEXT        IDC_ATTNAME, 38, 131, 100, 13, ES_AUTOHSCROLL
+    LTEXT           "&E-mail:", -1, 144, 133, 28, 8
+    EDITTEXT        IDC_ATTEMAIL, 172, 131, 151, 13, ES_AUTOHSCROLL
+    AUTOCHECKBOX    "&Optional", IDC_ATTOPTIONAL, 38, 149, 60, 10
+    PUSHBUTTON      "&Add", IDC_ATTADD, 213, 147, 52, 14
+    PUSHBUTTON      "&Remove", IDC_ATTREMOVE, 271, 147, 52, 14
+    LTEXT           "Response:", -1, 7, 170, 40, 8
+    COMBOBOX        IDC_ATTSTATUS, 48, 168, 100, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "Set res&ponse", IDC_ATTSETSTATUS, 154, 167, 60, 14
+    AUTOCHECKBOX    "&Send invitations by e-mail when I click OK", IDC_SENDINVITES, 7, 190, 316, 10
+    LTEXT           "My response:", -1, 7, 210, 50, 8
+    COMBOBOX        IDC_MYRESPONSE, 60, 208, 120, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+END
+
+IDD_EV_ONLINE DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "Online Meeting"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Attach a one-click video conference link. It is included in the invitation e-mail and the .ics file (CONFERENCE / Teams / Meet properties).", -1, 7, 7, 316, 24
+    LTEXT           "&Provider:", -1, 7, 40, 50, 8
+    COMBOBOX        IDC_CONFPROVIDER, 60, 38, 130, 120, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Generate link", IDC_CONFGENERATE, 196, 37, 70, 14
+    LTEXT           "&Link:", -1, 7, 60, 50, 8
+    EDITTEXT        IDC_CONFLINK, 60, 58, 263, 13, ES_AUTOHSCROLL
+    PUSHBUTTON      "&Join now", IDC_CONFJOIN, 60, 77, 60, 14
+    PUSHBUTTON      "&Copy link", IDC_CONFCOPY, 126, 77, 60, 14
+    AUTOCHECKBOX    "Also put the link in the &Location field", IDC_CONFINLOC, 60, 98, 263, 10
+    LTEXT           "", IDC_CONFHINT, 7, 118, 316, 80, SS_NOPREFIX
+END
+
+IDD_EV_REMIND DIALOGEX 0, 0, 330, 236
+STYLE PAGE_STYLE
+CAPTION "Reminders"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Re&minders for this event:", -1, 7, 7, 200, 8
+    LISTBOX         IDC_REMLIST, 7, 18, 200, 80, LBS_NOINTEGRALHEIGHT | WS_VSCROLL | WS_BORDER | WS_TABSTOP
+    LTEXT           "&When:", -1, 214, 18, 40, 8
+    COMBOBOX        IDC_REMTIME, 214, 28, 109, 160, CBS_DROPDOWN | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Notify by:", -1, 214, 46, 40, 8
+    COMBOBOX        IDC_REMMETHOD, 214, 56, 109, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Add", IDC_REMADD, 214, 76, 52, 14
+    PUSHBUTTON      "&Remove", IDC_REMREMOVE, 271, 76, 52, 14
+    LTEXT           "Type minutes (e.g. 45) or pick a preset. Pop-up reminders appear in a reminder window and as a notification; e-mail reminders are sent to your own address.", -1, 7, 104, 316, 24
+    GROUPBOX        "Focus time / out of office", -1, 7, 134, 316, 92
+    AUTOCHECKBOX    "Automatically &decline new invitations that overlap this event", IDC_AUTODECLINE, 15, 148, 300, 10
+    LTEXT           "Decline &message:", -1, 15, 164, 100, 8
+    EDITTEXT        IDC_DECLINEMSG, 15, 175, 300, 44, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+END
+
+// ===================================================================== Options pages
+IDD_OPT_GENERAL DIALOGEX 0, 0, 300, 200
+STYLE PAGE_STYLE
+CAPTION "General"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    GROUPBOX        "About you (used as organizer for invitations)", -1, 7, 7, 286, 50
+    LTEXT           "&Name:", -1, 15, 22, 50, 8
+    EDITTEXT        IDC_USERNAME, 80, 20, 205, 13, ES_AUTOHSCROLL
+    LTEXT           "&E-mail:", -1, 15, 38, 50, 8
+    EDITTEXT        IDC_USEREMAIL, 80, 36, 205, 13, ES_AUTOHSCROLL
+    GROUPBOX        "Calendar", -1, 7, 63, 286, 130
+    LTEXT           "First &day of week:", -1, 15, 78, 64, 8
+    COMBOBOX        IDC_WEEKSTART, 80, 76, 90, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&Work hours:", -1, 15, 96, 64, 8
+    COMBOBOX        IDC_WORKSTART, 80, 94, 60, 200, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "to", -1, 146, 96, 10, 8
+    COMBOBOX        IDC_WORKEND, 160, 94, 60, 200, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Default d&uration:", -1, 15, 114, 64, 8
+    COMBOBOX        IDC_DEFDURATION, 80, 112, 90, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Default &calendar:", -1, 15, 132, 64, 8
+    COMBOBOX        IDC_DEFCALENDAR, 80, 130, 140, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Start-up &view:", -1, 15, 150, 64, 8
+    COMBOBOX        IDC_DEFVIEW, 80, 148, 90, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Data is stored in %APPDATA%\\WinCalendar.", -1, 15, 172, 270, 8
+END
+
+IDD_OPT_TZ DIALOGEX 0, 0, 300, 200
+STYLE PAGE_STYLE
+CAPTION "Time Zones"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    AUTOCHECKBOX    "&Automatically use the time zone of my current location (Windows setting)", IDC_AUTOTZ, 7, 9, 286, 10
+    LTEXT           "", IDC_SYSTZ, 19, 22, 274, 8, SS_NOPREFIX
+    LTEXT           "Display time &zone (when not automatic - e.g. plan a trip in the destination's time):", -1, 7, 40, 286, 8
+    COMBOBOX        IDC_TZCOMBO, 7, 52, 286, 200, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    AUTOCHECKBOX    "Show a &second time zone in Day and Week views:", IDC_SHOW2TZ, 7, 78, 286, 10
+    COMBOBOX        IDC_TZ2, 7, 92, 286, 200, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "Current time", -1, 7, 114, 286, 78
+    LTEXT           "", IDC_TZPREVIEW, 15, 127, 270, 60, SS_NOPREFIX
+END
+
+IDD_OPT_NOTIFY DIALOGEX 0, 0, 300, 200
+STYLE PAGE_STYLE
+CAPTION "Notifications"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Default &reminder for new events:", -1, 7, 9, 120, 8
+    COMBOBOX        IDC_DEFREMINDER, 130, 7, 120, 160, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    GROUPBOX        "When a reminder is due", -1, 7, 28, 286, 66
+    AUTOCHECKBOX    "Show a &pop-up reminder window and desktop notification", IDC_REMPOPUP, 15, 42, 270, 10
+    AUTOCHECKBOX    "Play a &sound", IDC_REMSOUND, 15, 58, 270, 10
+    AUTOCHECKBOX    "Send &e-mail alerts for reminders set to ""E-mail""", IDC_REMEMAIL, 15, 74, 270, 10
+    PUSHBUTTON      "&Test notification", IDC_TESTNOTIFY, 7, 102, 80, 14
+    LTEXT           "Reminders are checked every 20 seconds while WinCalendar is running (it keeps running in the notification area when minimized). E-mail alerts use your default MAPI mail program.", -1, 7, 124, 286, 40
+END
+
+IDD_OPT_ONLINE DIALOGEX 0, 0, 300, 200
+STYLE PAGE_STYLE
+CAPTION "Online Meetings"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Default &provider:", -1, 7, 9, 70, 8
+    COMBOBOX        IDC_DEFCONF, 80, 7, 130, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    AUTOCHECKBOX    "&Automatically add an online meeting link to every meeting with attendees", IDC_AUTOCONF, 7, 26, 286, 10
+    GROUPBOX        "Personal meeting rooms (optional - used instead of generated links)", -1, 7, 44, 286, 104
+    LTEXT           "Teams:", -1, 15, 60, 50, 8
+    EDITTEXT        IDC_ROOM1, 66, 58, 219, 13, ES_AUTOHSCROLL
+    LTEXT           "Zoom:", -1, 15, 78, 50, 8
+    EDITTEXT        IDC_ROOM1+1, 66, 76, 219, 13, ES_AUTOHSCROLL
+    LTEXT           "Google Meet:", -1, 15, 96, 50, 8
+    EDITTEXT        IDC_ROOM1+2, 66, 94, 219, 13, ES_AUTOHSCROLL
+    LTEXT           "Webex:", -1, 15, 114, 50, 8
+    EDITTEXT        IDC_ROOM1+3, 66, 112, 219, 13, ES_AUTOHSCROLL
+    LTEXT           "Jitsi Meet:", -1, 15, 132, 50, 8
+    EDITTEXT        IDC_ROOM1+4, 66, 130, 219, 13, ES_AUTOHSCROLL
+    LTEXT           "Jitsi Meet links work instantly without an account. For Teams, Zoom and Meet, paste your personal meeting room link for guaranteed working one-click joins.", -1, 7, 156, 286, 32
+END
+
+IDD_OPT_FOCUS DIALOGEX 0, 0, 300, 200
+STYLE PAGE_STYLE
+CAPTION "Focus && Out of Office"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    AUTOCHECKBOX    "&Auto-decline invitations that overlap focus blocks or out-of-office time", IDC_AUTODECLINE, 7, 7, 286, 10
+    LTEXT           "Default decline &message:", -1, 7, 22, 120, 8
+    EDITTEXT        IDC_DECLINEMSG, 7, 32, 286, 26, ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL
+    LTEXT           "Default focus block &length:", -1, 7, 66, 100, 8
+    COMBOBOX        IDC_FOCUSLEN, 110, 64, 90, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "Upcoming focus blocks and out-of-office:", -1, 7, 84, 200, 8
+    CONTROL         "", IDC_BLOCKLIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 95, 286, 80
+    PUSHBUTTON      "New &focus block...", IDC_NEWFOCUS, 7, 180, 80, 14
+    PUSHBUTTON      "New &out of office...", IDC_NEWOOO, 92, 180, 80, 14
+    PUSHBUTTON      "&Open", IDC_OPENBLOCK, 177, 180, 50, 14
+END
+
+// ===================================================================== Organizer pages
+IDD_ORG_CALENDARS DIALOGEX 0, 0, 320, 220
+STYLE PAGE_STYLE
+CAPTION "Calendars"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Create separate calendars for projects, family chores or clients. Tick to show a calendar.", -1, 7, 7, 306, 8
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 19, 306, 132
+    LTEXT           "&Name:", -1, 7, 160, 30, 8
+    EDITTEXT        IDC_NAME, 40, 158, 150, 13, ES_AUTOHSCROLL
+    PUSHBUTTON      "", IDC_COLORSWATCH, 196, 157, 20, 14, BS_OWNERDRAW
+    PUSHBUTTON      "&Color...", IDC_COLOR, 220, 157, 45, 14
+    PUSHBUTTON      "&New", IDC_NEW, 7, 180, 55, 14
+    PUSHBUTTON      "&Rename", IDC_RENAME, 67, 180, 55, 14
+    PUSHBUTTON      "&Delete", IDC_DELETE, 127, 180, 55, 14
+    PUSHBUTTON      "Set de&fault", IDC_SETDEFAULT, 187, 180, 60, 14
+    LTEXT           "", IDC_HINT, 7, 200, 306, 16, SS_NOPREFIX
+END
+
+IDD_ORG_SHARING DIALOGEX 0, 0, 320, 220
+STYLE PAGE_STYLE
+CAPTION "Sharing"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Calendar:", -1, 7, 9, 40, 8
+    COMBOBOX        IDC_CALENDAR, 50, 7, 150, 120, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "", IDC_OWNER, 206, 9, 107, 8, SS_NOPREFIX
+    LTEXT           "&Shared file (OneDrive, network share or any synced folder):", -1, 7, 26, 306, 8
+    EDITTEXT        IDC_SHAREPATH, 7, 37, 250, 13, ES_AUTOHSCROLL
+    PUSHBUTTON      "&Browse...", IDC_BROWSE, 263, 36, 50, 14
+    LTEXT           "Group members:", -1, 7, 56, 100, 8
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 67, 306, 76
+    LTEXT           "&E-mail:", -1, 7, 151, 28, 8
+    EDITTEXT        IDC_EMAIL, 36, 149, 130, 13, ES_AUTOHSCROLL
+    COMBOBOX        IDC_PERM, 172, 149, 60, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Add", IDC_ADD, 238, 148, 36, 14
+    PUSHBUTTON      "&Remove", IDC_REMOVE, 277, 148, 36, 14
+    PUSHBUTTON      "&Share / publish", IDC_PUBLISH, 7, 170, 70, 14
+    PUSHBUTTON      "E-&mail invitation", IDC_EMAILSHARE, 82, 170, 70, 14
+    PUSHBUTTON      "S&top sharing", IDC_STOPSHARE, 157, 170, 60, 14
+    PUSHBUTTON      "&Open shared...", IDC_OPENSHARED, 243, 170, 70, 14
+    LTEXT           "", IDC_HINT, 7, 190, 306, 26, SS_NOPREFIX
+END
+
+IDD_ORG_CATEGORIES DIALOGEX 0, 0, 320, 220
+STYLE PAGE_STYLE
+CAPTION "Categories"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Color categories / tags. An event's category color overrides its calendar color.", -1, 7, 7, 306, 8
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 19, 306, 132
+    LTEXT           "&Name:", -1, 7, 160, 30, 8
+    EDITTEXT        IDC_NAME, 40, 158, 150, 13, ES_AUTOHSCROLL
+    PUSHBUTTON      "", IDC_COLORSWATCH, 196, 157, 20, 14, BS_OWNERDRAW
+    PUSHBUTTON      "&Color...", IDC_COLOR, 220, 157, 45, 14
+    PUSHBUTTON      "&Add", IDC_NEW, 7, 180, 55, 14
+    PUSHBUTTON      "&Rename", IDC_RENAME, 67, 180, 55, 14
+    PUSHBUTTON      "&Delete", IDC_DELETE, 127, 180, 55, 14
+END
+
+IDD_ORG_ACCOUNTS DIALOGEX 0, 0, 320, 220
+STYLE PAGE_STYLE
+CAPTION "Accounts"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 7, 306, 80
+    LTEXT           "&Name:", -1, 7, 95, 40, 8
+    EDITTEXT        IDC_NAME, 50, 93, 100, 13, ES_AUTOHSCROLL
+    LTEXT           "&Provider:", -1, 156, 95, 34, 8
+    COMBOBOX        IDC_PROVIDER, 192, 93, 121, 120, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    LTEXT           "&E-mail:", -1, 7, 112, 40, 8
+    EDITTEXT        IDC_EMAIL, 50, 110, 140, 13, ES_AUTOHSCROLL
+    AUTOCHECKBOX    "Sync &automatically (30 min)", IDC_AUTOSYNC, 196, 111, 117, 10
+    LTEXT           "Calendar &URL:", -1, 7, 129, 42, 8
+    EDITTEXT        IDC_URL, 50, 127, 263, 13, ES_AUTOHSCROLL
+    PUSHBUTTON      "A&dd", IDC_ADD, 7, 146, 50, 14
+    PUSHBUTTON      "&Update", IDC_UPDATE, 62, 146, 50, 14
+    PUSHBUTTON      "&Remove", IDC_REMOVE, 117, 146, 50, 14
+    PUSHBUTTON      "&Sync now", IDC_SYNCNOW, 263, 146, 50, 14
+    LTEXT           "", IDC_HINT, 7, 166, 306, 50, SS_NOPREFIX
+END
+
+// ===================================================================== Meetings pages
+IDD_MTG_SENT DIALOGEX 0, 0, 340, 230
+STYLE PAGE_STYLE
+CAPTION "RSVP Tracking"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Meetings you organize:", -1, 7, 7, 200, 8
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 18, 326, 80
+    LTEXT           "Attendee responses:", -1, 7, 104, 200, 8
+    CONTROL         "", IDC_LIST2, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 115, 326, 72
+    COMBOBOX        IDC_ATTSTATUS, 7, 193, 90, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Set response", IDC_ATTSETSTATUS, 101, 192, 58, 14
+    PUSHBUTTON      "&Accept proposed time", IDC_ACCEPTPROP, 163, 192, 84, 14
+    PUSHBUTTON      "&Open", IDC_OPEN, 251, 192, 40, 14
+    PUSHBUTTON      "&Resend", IDC_RESEND, 294, 192, 39, 14
+    PUSHBUTTON      "&Import replies (.ics)...", IDC_IMPORTREPLY, 7, 210, 90, 14
+    LTEXT           "Replies arrive as .ics e-mail attachments: import them to update responses.", -1, 101, 213, 232, 8
+END
+
+IDD_MTG_RECEIVED DIALOGEX 0, 0, 340, 230
+STYLE PAGE_STYLE
+CAPTION "Invitations"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "Invitations you have received:", -1, 7, 7, 200, 8
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 18, 326, 150
+    PUSHBUTTON      "&Accept", IDC_ACCEPT, 7, 174, 50, 14
+    PUSHBUTTON      "&Tentative", IDC_TENTATIVE, 61, 174, 50, 14
+    PUSHBUTTON      "&Decline", IDC_DECLINE, 115, 174, 50, 14
+    PUSHBUTTON      "&Propose new time...", IDC_PROPOSE, 169, 174, 80, 14
+    PUSHBUTTON      "&Open", IDC_OPEN, 253, 174, 40, 14
+    PUSHBUTTON      "&Import invitation (.ics)...", IDC_IMPORTREPLY, 7, 194, 100, 14
+    LTEXT           "", IDC_HINT, 111, 194, 222, 30, SS_NOPREFIX
+END
+
+// ===================================================================== Standalone dialogs
+IDD_SEARCH DIALOGEX 0, 0, 420, 250
+STYLE DLG_STYLE
+CAPTION "Smart Search"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Find:", -1, 7, 9, 22, 8
+    EDITTEXT        IDC_KEYWORD, 32, 7, 300, 13, ES_AUTOHSCROLL
+    DEFPUSHBUTTON   "&Search", IDC_SEARCHBTN, 340, 6, 73, 15
+    AUTOCHECKBOX    "&Title && notes", IDC_SCOPE_TITLE, 32, 25, 70, 10
+    AUTOCHECKBOX    "&Location", IDC_SCOPE_LOC, 104, 25, 50, 10
+    AUTOCHECKBOX    "&Attendees", IDC_SCOPE_ATT, 158, 25, 55, 10
+    COMBOBOX        IDC_RANGE, 220, 23, 112, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    COMBOBOX        IDC_CALENDAR, 340, 23, 73, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 40, 406, 182
+    LTEXT           "", IDC_RESULTCOUNT, 7, 231, 200, 8, SS_NOPREFIX
+    PUSHBUTTON      "&Open", IDC_OPEN, 247, 228, 52, 15
+    PUSHBUTTON      "&Go to", IDC_GOTO, 304, 228, 52, 15
+    PUSHBUTTON      "Close", IDCANCEL, 361, 228, 52, 15
+END
+
+IDD_TASK DIALOGEX 0, 0, 260, 160
+STYLE DLG_STYLE
+CAPTION "Task"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Task:", -1, 7, 9, 40, 8
+    EDITTEXT        IDC_TITLE, 50, 7, 203, 13, ES_AUTOHSCROLL
+    AUTOCHECKBOX    "&Due:", IDC_HASDUE, 7, 27, 40, 10
+    CONTROL         "", IDC_DUEDATE, DATETIMEPICK_CLASS, DTS_SHORTDATECENTURYFORMAT | WS_TABSTOP, 50, 25, 90, 13
+    LTEXT           "&Priority:", -1, 150, 27, 30, 8
+    COMBOBOX        IDC_PRIORITY, 183, 25, 70, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    AUTOCHECKBOX    "&Completed", IDC_DONE, 50, 44, 80, 10
+    LTEXT           "&Notes:", -1, 7, 60, 40, 8
+    EDITTEXT        IDC_NOTES, 50, 60, 203, 72, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    DEFPUSHBUTTON   "OK", IDOK, 146, 139, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 203, 139, 50, 14
+END
+
+IDD_TASKS DIALOGEX 0, 0, 340, 230
+STYLE DLG_STYLE
+CAPTION "To-Do List"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | LVS_SINGLESEL | WS_BORDER | WS_TABSTOP, 7, 7, 326, 180
+    AUTOCHECKBOX    "&Show completed", IDC_SHOWDONE, 7, 193, 80, 10
+    PUSHBUTTON      "&New...", IDC_NEW, 7, 209, 50, 14
+    PUSHBUTTON      "&Edit...", IDC_EDIT, 61, 209, 50, 14
+    PUSHBUTTON      "&Delete", IDC_DELETE, 115, 209, 50, 14
+    PUSHBUTTON      "&Clear completed", IDC_CLEARDONE, 169, 209, 70, 14
+    DEFPUSHBUTTON   "Close", IDOK, 283, 209, 50, 14
+END
+
+IDD_GOTO DIALOGEX 0, 0, 180, 60
+STYLE DLG_STYLE
+CAPTION "Go to Date"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "&Date:", -1, 7, 11, 30, 8
+    CONTROL         "", IDC_DATE, DATETIMEPICK_CLASS, DTS_LONGDATEFORMAT | WS_TABSTOP, 40, 9, 133, 13
+    DEFPUSHBUTTON   "OK", IDOK, 66, 39, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 123, 39, 50, 14
+END
+
+IDD_PROPOSE DIALOGEX 0, 0, 240, 130
+STYLE DLG_STYLE
+CAPTION "Propose New Time"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    LTEXT           "", IDC_SUMMARY, 7, 7, 226, 16, SS_NOPREFIX
+    LTEXT           "&New start:", -1, 7, 30, 40, 8
+    CONTROL         "", IDC_DATE, DATETIMEPICK_CLASS, DTS_SHORTDATECENTURYFORMAT | WS_TABSTOP, 50, 28, 90, 13
+    CONTROL         "", IDC_TIME, DATETIMEPICK_CLASS, DTS_TIMEFORMAT | DTS_UPDOWN | WS_TABSTOP, 145, 28, 70, 13
+    LTEXT           "&Comment:", -1, 7, 48, 40, 8
+    EDITTEXT        IDC_COMMENT, 50, 46, 183, 56, ES_MULTILINE | ES_AUTOVSCROLL | ES_WANTRETURN | WS_VSCROLL
+    DEFPUSHBUTTON   "Send", IDOK, 126, 109, 50, 14
+    PUSHBUTTON      "Cancel", IDCANCEL, 183, 109, 50, 14
+END
+
+IDD_REMINDER DIALOGEX 0, 0, 300, 150
+STYLE DS_SHELLFONT | WS_POPUP | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX
+EXSTYLE WS_EX_TOPMOST | WS_EX_APPWINDOW
+CAPTION "Reminders"
+FONT 9, "Segoe UI", 400, 0, 0x1
+BEGIN
+    CONTROL         "", IDC_LIST, WC_LISTVIEW, LVS_REPORT | LVS_SHOWSELALWAYS | WS_BORDER | WS_TABSTOP, 7, 7, 286, 98
+    PUSHBUTTON      "&Open item", IDC_OPEN, 7, 111, 55, 14
+    PUSHBUTTON      "&Dismiss", IDC_DISMISS, 182, 111, 52, 14
+    PUSHBUTTON      "Dismiss &all", IDC_DISMISSALL, 241, 111, 52, 14
+    LTEXT           "Snoo&ze for:", -1, 7, 133, 42, 8
+    COMBOBOX        IDC_SNOOZETIME, 52, 131, 100, 100, CBS_DROPDOWNLIST | WS_VSCROLL | WS_TABSTOP
+    PUSHBUTTON      "&Snooze", IDC_SNOOZE, 158, 130, 52, 14
+END
